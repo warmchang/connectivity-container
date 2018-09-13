@@ -69,7 +69,7 @@ connectivity-container   alpine3.8            33e7b3dbf394        3 minutes ago 
 ➜  connectivity-container git:(master)
 ```
 
-## 2. Build on local host
+## 2. Build on host
 
 * prepare the golang env
 * prepare the docker env
@@ -130,7 +130,43 @@ connectivity-container                               alpine3.8           6a60b69
 * done.
 
 # Response example
+## 1. Curl from host
 ```
 ➜  connectivity-container git:(master) ✗ curl localhost:8028
 { 'Time': 'Wed, 12 Sep 2018 08:31:04 UTC','RequestURI': '/','Host': 'localhost:8028', 'UserAgent': 'curl/7.29.0' }#➜  connectivity-container git:(master) ✗
+```
+
+## 2. Curl from POD
+```
+ ⚡ root@k8s  /paasdata/gopath/src/k8s.io  kubectl version
+Client Version: version.Info{Major:"1", Minor:"10", GitVersion:"v1.10.7", GitCommit:"0c38c362511b20a098d7cd855f1314dad92c2780", GitTreeState:"archive", BuildDate:"2018-08-21T02:53:11Z", GoVersion:"go1.10.3", Compiler:"gc", Platform:"linux/amd64"}
+Server Version: version.Info{Major:"1", Minor:"10", GitVersion:"v1.10.7", GitCommit:"0c38c362511b20a098d7cd855f1314dad92c2780", GitTreeState:"archive", BuildDate:"2018-08-21T02:53:11Z", GoVersion:"go1.10.3", Compiler:"gc", Platform:"linux/amd64"}
+ ⚡ root@k8s  /paasdata/gopath/src/k8s.io  kubectl get pod -o wide | grep connectivity-container
+connectivity-container-69459d58f5-c8fgr   1/1       Running   0          16h       172.17.0.5   192.165.1.72
+connectivity-container-69459d58f5-n7zjw   1/1       Running   0          16h       172.17.0.6   192.165.1.72
+ ⚡ root@k8s  /paasdata/gopath/src/k8s.io  kubectl exec -ti connectivity-container-69459d58f5-c8fgr -- /bin/sh
+~ # ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN qlen 1
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host
+       valid_lft forever preferred_lft forever
+61: eth0@if62: <BROADCAST,MULTICAST,UP,LOWER_UP,M-DOWN> mtu 1500 qdisc noqueue state UP
+    link/ether 02:42:ac:11:00:05 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.5/16 scope global eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:acff:fe11:5/64 scope link
+       valid_lft forever preferred_lft forever
+~ # curl 172.17.0.6:8028/lalala
+{ 'Time': 'Thu, 13 Sep 2018 01:38:03 UTC','RequestURI': '/lalala','Host': '172.17.0.6:8028', 'UserAgent': 'curl/7.61.1' }~ #
+~ # cat /etc/os-release
+NAME="Alpine Linux"
+ID=alpine
+VERSION_ID=3.8.1
+PRETTY_NAME="Alpine Linux v3.8"
+HOME_URL="http://alpinelinux.org"
+BUG_REPORT_URL="http://bugs.alpinelinux.org"
+~ # exit
+ ⚡ root@k8s  /paasdata/gopath/src/k8s.io 
 ```
