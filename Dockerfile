@@ -1,4 +1,4 @@
-FROM golang:1.10.4-alpine3.8 as builder
+FROM golang:1.10.7-alpine3.8 as builder
 WORKDIR /tmp
 COPY main.go .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o connectivity-container .
