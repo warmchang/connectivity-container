@@ -1,7 +1,7 @@
-FROM alpine:3.8
+FROM alpine:3.10.3
 MAINTAINER William Zhang "warmchang@outlook.com"
 WORKDIR /root/
 EXPOSE 8028
 RUN apk add --no-cache curl
-COPY ./connectivity-container .
-CMD ["./connectivity-container"]
+COPY ./connectivity .
+CMD ["./connectivity"]
